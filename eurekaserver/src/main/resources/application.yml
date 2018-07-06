@@ -1,0 +1,13 @@
+server:
+  port: 8761
+eureka:
+ server:
+  instance:
+    hostname: localhost
+  client:
+  #eureka的server也是client 需要指定 这两个false表明这是一个server
+   registerWithEureka: false
+   fetch-registry: false
+   serviceUrl:
+    defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  enable-self-preservation: false
