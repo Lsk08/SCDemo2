@@ -1,0 +1,40 @@
+Q: ribbon的 RestTemplate 如何实现LoadBalace
+    实现形式     @LoadBalanced
+    实现原理   interceptor
+
+    LoadBalancerAutoConfiguration
+        通过识别有@LoanBalanced的RestTemplate配置一些interceptors
+            restTemplate.setInterceptors(list);
+
+    LoadBalancerInterceptor
+        通过restTemplate发送请求的时候就会通过这个interceptor的execute方法执行
+            LoadBalancerInterceptor.intercept
+              this.loadBalancer.execute(serviceName, requestFactory.createRequest(request, body, execution));
+                ClientHttpRequestInterceptor nextInterceptor = (ClientHttpRequestInterceptor)this.iterator.next();
+                return nextInterceptor.intercept(request, body, this);
+
+    RibbonLoadBalancerClient
+        最后调用 RibbonLoadBalancerClient.execute
+
+    ILoadBalancer
+        选择具体的server就在 loadBalancer.chooseServer
+
+    ZoneAwareLoadBalancer
+        Ribbon使用ZoneAwareLoanBalancer作为ILoadBalancer的实现类
+        ZoneAwareLoadBalancer.choose 来选择server
+
+    IRule
+        最终是通过IRule的实现类RoundRobinRule来选择server
+        List<Server> allServers = lb.getAllServers();
+            server = (Server)allServers.get(nextServerIndex);
+                int nextServerIndex = this.incrementAndGetModulo(serverCount);
+                        current = this.nextServerCyclicCounter.get();
+                        next = (current + 1) % modulo;
+                        while(!this.nextServerCyclicCounter.compareAndSet(current, next))
+        也就是用一个AtomicInteger 保存一个index 每次取 (index+1)%server总数
+        然后通过compareAndSet更新index
+
+注IRule的实现类
+    BestAvailableRule 通过计算与各个server链接数量的最小值 选择最小的一个
+    WeightedResponseTimeRule 按照weight进行概率选择
+    RandomRule 随机生成小于allServer.size()的整数作为index

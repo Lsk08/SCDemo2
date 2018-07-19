@@ -7,8 +7,15 @@ server:
 spring:
   application:
     name: service-feign
+  zipkin:
+    base-url: http://localhost:9411/
+  sleuth:
+    sampler:
+      probability: 1.0
+    enabled: true
 
-#feignÄ¬ÈÏ¼¯³Éhystrix ´ËÎª¿ªÆôÅäÖÃ
+
+#feigné»˜è®¤é›†æˆhystrix æ­¤ä¸ºå¼€å¯é…ç½®
 feign:
   hystrix:
     enabled: true

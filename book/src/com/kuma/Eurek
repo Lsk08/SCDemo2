@@ -1,0 +1,10 @@
+DiscoveryClient -- 服务发现的接口
+EurekaDiscoveryClient 实现类 从Eureka中发现服务
+
+DiscoveryClient 通过http请求服务中心注册  返回结果204为成功
+                服务注册的同时还有 服务续约 和  服务获取
+
+基本套路都是http+timer定时刷新状态
+
+                EurekaServer 也就是接受请求 封装成InstanceInfo
+                放在一个concurrentHashMap里 key = appname value = 封装了instance的Lease

@@ -1,15 +1,25 @@
-#声明自己是个client 并且注册server的地址
+#澹版槑鑷繁鏄釜client 骞朵笖娉ㄥ唽server鐨勫湴鍧�
 eureka:
   client:
     serviceUrl:
      defaultZone: http://localhost:8761/eureka/ #http://eureka.didispace.com/eureka/
 
-#微服务通过name作为标识
+#寰湇鍔￠�氳繃name浣滀负鏍囪瘑
+#閰嶇疆zipkin鏈嶅姟鍦板潃
 spring:
+  zipkin:
+    base-url: http://localhost:9411/
   application:
     name: helloworld
+  sleuth:
+    sampler:
+      probability: 1.0
+    enabled: true
+
 
 server:
   port: 8762
+
+
 
 
